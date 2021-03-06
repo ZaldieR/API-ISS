@@ -1,0 +1,40 @@
+#!/bin/env python3
+import requests, time
+import os
+clear = lambda: os.system('clear')
+
+def get_pos():
+    url = "http://api.open-notify.org/iss-now.json"
+    content = requests.get(url)
+    data = content.json()
+    print(data['iss_position'])
+    return (data)
+
+def get_people():
+    url = "http://api.open-notify.org/astros.json"
+    content = requests.get(url)
+    data = content.json()
+    print("There is {} persons in space:".format(data['number']))
+    for x in data['people']:
+        print(x)
+
+def main():
+    while(1):
+        clear()
+        data = get_pos()
+        get_people()
+        url = "http://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid=d72790b278c88553ebd68cec1e59127c".format(
+            data['iss_position']['latitude'], data['iss_position']['longitude'])
+        
+        # url = "http://api.openweathermap.org/data/2.5/weather?q=paris&appid=d72790b278c88553ebd68cec1e59127c"
+        content = requests.get(url)
+        data = content.json()
+        # print(data)
+        if (data['name'] != ''):
+            print(data['sys']['country'] + ", " + data['name'])
+        else:
+            print("none")
+        time.sleep(5)
+
+
+main()
